@@ -35,3 +35,4 @@ npx skills add ygcedu/skills -g
 | Skill | 说明 |
 |-------|------|
 | `nas` | 通过 `qk ssh` 操作 NAS（远程命令、Docker、Compose） |
+| `release-please` | 配置和排查 release-please 自动生成 CHANGELOG、Release PR 与版本发布 |

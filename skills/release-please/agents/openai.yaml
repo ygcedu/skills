@@ -1,0 +1,3 @@
+interface:
+  display_name: "Release Please"
+  short_description: "配置和排查自动版本发布与 CHANGELOG"
