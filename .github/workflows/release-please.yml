@@ -1,0 +1,35 @@
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target-branch: main
+          config-file: .github/release-please-config.json
+          manifest-file: .github/.release-please-manifest.json
+          include-component-in-tag: false
+
+      - name: Publish skills
+        if: steps.release.outputs.release_created == 'true'
+        run: |
+          TAG=${{ steps.release.outputs.tag_name }}
+          echo "Publishing skills as $TAG"
+          gh skill publish --tag "$TAG"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
