@@ -12,6 +12,7 @@
   "packages": {
     ".": {
       "release-type": "node",
+      "include-component-in-tag": false,
       "changelog-path": "CHANGELOG.md"
     }
   }
@@ -68,6 +69,8 @@ jobs:
 ```
 
 不要用 `pull_request_created` 触发制品发布。Release PR 合并后，后续 push 才会创建 GitHub Release，并令 `release_created` 为 `true`。
+
+`include-component-in-tag` 必须配置在对应的 `packages` 项中，不能作为 `googleapis/release-please-action` 的输入。设为 `false` 后，单包仓库生成 `v1.0.0`；若省略或设为 `true`，标签可能包含组件名前缀，例如 `my-package-v1.0.0`。
 
 ## 常见 release type
 
