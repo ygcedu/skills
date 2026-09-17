@@ -1,0 +1,25 @@
+{
+  "name": "skills",
+  "version": "0.0.0",
+  "private": true,
+  "description": "个人 AI agent skill 开发仓库，遵循 [agentskills.io](https://agentskills.io) 规范。",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ygcedu/skills.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ygcedu/skills/issues"
+  },
+  "homepage": "https://github.com/ygcedu/skills#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
+    "husky": "^9.1.7"
+  }
+}
