@@ -29,3 +29,9 @@ npx skills add ygcedu/skills -a claude-code -s nas
 # 全局安装
 npx skills add ygcedu/skills -g
 ```
+
+## 现有 skills
+
+| Skill | 说明 |
+|-------|------|
+| `nas` | 通过 `qk ssh` 操作 NAS（远程命令、Docker、Compose） |
