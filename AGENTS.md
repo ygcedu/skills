@@ -122,6 +122,14 @@ gh skill publish --tag v1.0.0
 
 发布流程会自动：添加 `agent-skills` topic → 选择 semver 版本号 → 创建 GitHub Release。
 
+## 变更同步
+
+新增、修改或删除 skill 后，必须同步更新 `README.md` 的"现有 skills"列表，保持与 `skills/` 目录一致。
+
+**原因：** README 是仓库入口，安装者通过它快速了解可用技能。README 与 skills 目录不一致会导致用户找不到新技能或看到已删除的技能。
+
+**执行时机：** 在提交 skill 变更的同一 commit 中完成 README 更新；若一次变更涉及多个 skill，统一更新一次 README。
+
 ## 安装（其他机器）
 
 ```bash

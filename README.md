@@ -36,3 +36,4 @@ npx skills add ygcedu/skills -g
 |-------|------|
 | `nas` | 通过 `qk ssh` 操作 NAS（远程命令、Docker、Compose） |
 | `release-please` | 配置和排查 release-please 自动生成 CHANGELOG、Release PR 与版本发布 |
+| `session-to-skill` | 从当前或近期会话中提炼可复用的 agent skill |
