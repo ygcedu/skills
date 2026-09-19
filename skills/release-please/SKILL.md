@@ -12,7 +12,7 @@ metadata:
 
 ## 配置流程
 
-1. 读取默认分支、远程仓库、现有 workflow、版本文件、标签和 GitHub Releases。保留用户已有的发布逻辑与未提交修改。
+1. 询问用户希望哪个分支触发 release-please workflow；默认使用当前分支（`git branch --show-current`）。读取远程仓库信息、现有 workflow、版本文件、标签和 GitHub Releases。保留用户已有的发布逻辑与未提交修改。将用户指定的分支名写入 workflow 的 `branches:` 字段，不写死 `main`。
 2. 根据项目选择 release type 和版本文件。需要配置示例或判断 release type 时，读取 [references/configuration.md](references/configuration.md)。
 3. 使用 manifest 模式时同时创建或更新 `.github/release-please-config.json`、`.github/.release-please-manifest.json` 和 `.github/workflows/release-please.yml`。
 4. 确保配置包含 `packages`。单包根目录至少为 `"packages": { ".": { "release-type": "..." } }`；缺少它会导致日志出现 `Splitting 0 commits by path`，Action 成功但不创建 PR。

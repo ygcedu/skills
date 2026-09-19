@@ -53,12 +53,12 @@ jobs:
         uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          target-branch: main
+          target-branch: ${{ github.ref_name }}
           config-file: .github/release-please-config.json
           manifest-file: .github/.release-please-manifest.json
 ```
 
-把 `main` 替换为实际默认分支。release-please 本身不要求 checkout；只有后续构建或发布步骤需要仓库文件时才添加 `actions/checkout`。
+触发分支（`on.push.branches`）是静态的，不能写表达式；`target-branch` 可以用 `${{ github.ref_name }}` 动态获取实际推送的分支名。两者配合：触发时固定看某个分支（通常为默认分支），运行时自动匹配实际分支。release-please 本身不要求 checkout；只有后续构建或发布步骤需要仓库文件时才添加 `actions/checkout`。
 
 发布步骤应使用：
 
