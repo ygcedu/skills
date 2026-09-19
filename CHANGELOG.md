@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/ygcedu/skills/compare/v1.0.0...v1.1.0) (2026-09-19)
+
+
+### Added
+
+* 添加 session-to-skill 技能 ([cb2e51c](https://github.com/ygcedu/skills/commit/cb2e51c1b7e21e46e24939e4a448890945725a6f))
+
+
+### Fixed
+
+* branches 字段改为询问用户指定，默认当前分支 ([3a49b55](https://github.com/ygcedu/skills/commit/3a49b559dee5fd80c3adf1f22f1816092a08cf33))
+
 ## 1.0.0 (2026-09-17)
 
 
@@ -15,5 +27,3 @@
 ### Fixed
 
 * 修正 release-please 标签和发布流程 ([8d8ad44](https://github.com/ygcedu/skills/commit/8d8ad44943bda2a446f513d88732f146de31e204))
-
-
