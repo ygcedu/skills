@@ -37,3 +37,18 @@ npx skills add ygcedu/skills -g
 | `nas` | 通过 `qk ssh` 操作 NAS（远程命令、Docker、Compose） |
 | `release-please` | 配置和排查 release-please 自动生成 CHANGELOG、Release PR 与版本发布 |
 | `session-to-skill` | 从当前或近期会话中提炼可复用的 agent skill |
+| `archify` | 第三方技能：生成交互式架构与流程图，来自 [tt-a1i/archify](https://github.com/tt-a1i/archify) |
+
+## 第三方 skill 更新
+
+第三方源码随仓库提交，来源和版本记录在 `third-party-skills.conf`。版本填写 `commit = 完整 SHA` 或 `tag = v2.16.0`，二选一。
+
+```bash
+# 安装 archify
+npx skills add ygcedu/skills -a claude-code -s archify
+
+# 同步清单指定版本（只需要 Git）
+./scripts/sync-skills
+```
+
+更新时修改清单中的 commit 或 tag 后同步，脚本直接覆盖目标目录。检查差异并提交源码与清单。
