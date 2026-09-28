@@ -48,7 +48,7 @@ npx skills add ygcedu/skills -g
 npx skills add ygcedu/skills -a claude-code -s archify
 
 # 同步清单指定版本（只需要 Git）
-./scripts/sync-skills
+qk git copy-dir
 ```
 
-更新时修改清单中的 commit 或 tag 后同步，脚本直接覆盖目标目录。检查差异并提交源码与清单。
+更新时修改清单中的 commit 或 tag 后同步，命令直接覆盖目标目录。检查差异并提交源码与清单。未安装新版 `qk` 时仍可运行 `./scripts/sync-skills`。
