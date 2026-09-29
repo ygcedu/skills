@@ -37,6 +37,7 @@ npx skills add ygcedu/skills -g
 | `nas` | 通过 `qk ssh` 操作 NAS（远程命令、Docker、Compose） |
 | `release-please` | 配置和排查 release-please 自动生成 CHANGELOG、Release PR 与版本发布 |
 | `session-to-skill` | 从当前或近期会话中提炼可复用的 agent skill |
+| `vibe-finder` | 扫描代码库并按优先级生成可执行的改进建议清单 |
 | `archify` | 第三方技能：生成交互式架构与流程图，来自 [tt-a1i/archify](https://github.com/tt-a1i/archify) |
 
 ## 第三方 skill 更新
