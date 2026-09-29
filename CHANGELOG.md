@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/ygcedu/skills/compare/v1.1.0...v1.2.0) (2026-09-29)
+
+
+### Added
+
+* 明确 vibe-finder 的 Paseo 派发流程 ([d3e680e](https://github.com/ygcedu/skills/commit/d3e680e60534165e0eb8b010061af3f78a26a7a1))
+* 添加 vibe-finder 技能 ([2531e1e](https://github.com/ygcedu/skills/commit/2531e1e548435dfa47baebd60aff7f713a6cceb6))
+* 添加固定版本的 archify 技能及源码同步脚本 ([c54a7c3](https://github.com/ygcedu/skills/commit/c54a7c3fd45ae92eeea196ad3af90812a4ee731a))
+
+
+### Fixed
+
+* package.json license 改为 MIT，与仓库 LICENSE 保持一致 ([f691d5a](https://github.com/ygcedu/skills/commit/f691d5a6b4131cbcb32b50ada8b59af8173d36cc))
+
 ## [1.1.0](https://github.com/ygcedu/skills/compare/v1.0.0...v1.1.0) (2026-09-19)
 
 
