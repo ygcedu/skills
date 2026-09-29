@@ -110,70 +110,87 @@ description: 让coding agent自主发现代码库中的改进机会并生成可�
 - 说明各区间任务的依赖关系（比如"先修好类型再补测试"）
 - 标注哪些可以并行执行
 
-### 4. 执行阶段 — 用 Paseo 工具派发子agent并行处理
+### 4. 执行阶段 — 使用 Paseo 创建 workspace 并派发子agent
 
 当用户确认要执行任务时，按以下步骤派发：
 
-#### 4.1 按文件分组，确保无冲突
+#### 4.1 按可独立验收的任务分组
 
-将任务按修改的文件分组。**同一文件的任务必须放在同一个agent里**。不同文件的任务可以并行。
+将建议拆成有明确目标、输入和完成标准的任务组。优先按功能或模块分组；只有当两个任务修改同一文件且不能安全并行时，才合并到同一组。不同组必须能在各自隔离的 workspace 中独立完成和验收。
 
-#### 4.2 为每组任务创建 Paseo worktree
+一次最多并行创建 3 个agent。任务较多时分批派发，避免上下文过载。
 
-使用 `create_worktree` 工具：
+#### 4.2 为每组创建隔离 workspace
 
-```
-create_worktree(target: { kind: "branch-off", branchName: "fix/简短描述" })
-```
+对每个任务组调用 `mcp__paseo__create_workspace`，按以下完整参数结构传参：
 
-- 每个worktree对应一个agent的工作组
-- `branchName` 要简洁描述任务内容（如 `fix/types`、`perf/hit-detection`）
-- 返回结果中包含 worktree 路径和分支名，记录下来供后续使用
-
-#### 4.3 创建子agent并分配任务
-
-使用 `create_agent` 工具，参数说明：
-
-```
-create_agent(
-  relationship: { kind: "subagent" },     // 子agent，报告给你
-  workspace: { kind: "current" },          // 在当前workspace运行
-  title: "fix/types — 类型安全修复",       // 简短描述，<=60字符
-  provider: "<当前agent的provider>",       // 使用和父agent相同的provider，除非用户特别说明
-  initialPrompt: "你在worktree {worktree_path} 中，分支 {branch_name}。\n\n请修复以下任务：\n- 任务1: 具体描述 + 文件路径 + 行号\n- 任务2: ...\n\n完成后提交commit，message格式: [fix]/[perf]/[chore]:[模块] 描述\n\n注意：不要改动其他文件。"
+```text
+mcp__paseo__create_workspace(
+  isolation: "worktree",
+  projectId: "<当前项目对应的 Paseo project ID>",
+  title: "<能说明任务内容的简短标题>"
 )
 ```
 
-- **provider 必填** — `create_agent` 要求显式传入 provider，默认使用和父agent相同的provider，除非用户特别说明用不同的模型
-- 每个agent处理一组**无文件冲突**的任务
-- 最多并行4-5个agent，避免上下文过载
-- 在 `initialPrompt` 中必须明确告知：
-  - worktree路径和分支名
-  - 具体改什么（文件路径 + 行号 + 改动内容）
-  - 提交commit的message格式
-  - 不要改动其他文件
+- `isolation` 固定为 `"worktree"`，为每组任务创建隔离工作区。
+- `projectId` 使用 Paseo 提供的当前项目 ID；如果尚不清楚，先查询可用项目，不得猜测。
+- `title` 使用能说明任务内容的简短标题，例如 `vibe-finder-修复鉴权校验`。
+- 不传 `path`，让 Paseo 选择工作区路径。
 
-#### 4.4 等待agent完成，收集commit hash
+从工具返回的 workspace 对象读取 `workspaceId` 和路径，记录它们与任务组的对应关系。创建失败或无法确定正确的 `projectId` 时，停止派发并向用户说明具体问题；不要改在主 workspace 中执行。
 
-每个agent完成后会收到通知。记录其commit hash，用于后续合并。
+#### 4.3 在对应 workspace 中创建agent
 
-#### 4.5 Cherry-pick合并到main
+对每个任务组调用 `mcp__paseo__create_agent`，按以下完整参数结构传参：
 
-```
-git cherry-pick <commit_hash>
-```
-
-每个agent的commit cherry-pick到main主分支。如果某个agent没有产生有效commit（如文件未改动），跳过。
-
-#### 4.6 清理worktree
-
-使用 `archive_worktree` 工具：
-
-```
-archive_worktree(worktreePath: "/path/to/worktree")
+```text
+mcp__paseo__create_agent(
+  provider: "<当前 agent 使用的 provider>",
+  workspaceId: "<对应 create_workspace 返回的 workspaceId>",
+  settings: {
+    modeId: "bypassPermissions"
+  },
+  notifyOnFinish: true,
+  title: "<任务组简短名称>",
+  prompt: "<按下方模板填写的任务说明>"
+)
 ```
 
-所有commit合并成功后，清理所有worktree。
+- `provider` 使用当前 agent 的 provider；若工具要求其他已配置的 provider，按用户指定或项目配置填写，不要编造名称。
+- `workspaceId` 必须使用对应 `mcp__paseo__create_workspace` 返回的值。
+- `settings.modeId` 固定使用 `bypassPermissions`，让子 agent 以无需逐项确认的最高权限模式自动执行任务。
+- `notifyOnFinish` 固定为 `true`，以便收到完成通知。
+- `title` 使用能区分任务组的简短名称。
+- `prompt` 按下方模板填写目标、文件、验收标准和验证方式。
+
+创建后核对每个 agent 的 `workspaceId` 与分配的任务组一致。
+
+在 `prompt` 中使用以下结构描述任务；workspace 通过 `workspaceId` 参数绑定，不要依赖 prompt 中的路径指定：
+
+```text
+任务：{task_title}
+
+目标：{task_goal}
+需要检查或修改的文件：{file_paths_and_known_lines}
+具体要求：{implementation_requirements}
+验收标准：{acceptance_criteria}
+验证方式：{verification_steps}
+
+只处理以上分配的任务；发现超出范围的问题时先报告，不要顺手修改。完成后汇报改动文件、验证结果和未解决项。有改动时提交 commit，并提供 commit hash；commit message 使用中文，简要说明改动内容。
+```
+
+
+#### 4.4 等待并验收各组结果
+
+等待每个agent的完成通知。检查改动是否符合任务范围和验收标准，阅读验证结果并记录 commit hash。结果不完整或验证失败时，向对应agent指出缺口并要求补齐；不要合并未验收的改动。
+
+#### 4.5 合并已验收的改动
+
+只合并已验收且能定位到明确 commit 的改动。按 Paseo 返回的 workspace 路径检查改动和 commit，并使用 Git 合并或 cherry-pick 已验收的 commit；处理冲突后重新检查最终差异。agent 未产生改动或 commit 时跳过该组，并在结果中说明。
+
+#### 4.6 清理隔离 workspace
+
+确认改动已合并或明确放弃后，使用 Paseo 提供的 workspace 删除或归档工具回收对应 workspace。保留仍需复查或尚未合并的 workspace，并向用户报告其状态。
 
 ## 注意事项
 
